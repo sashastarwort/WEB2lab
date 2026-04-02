@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ML Alarm - Реєстрація</title>
+    <link rel="icon" type="image/png" href="Alarm.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .navbar-custom { backdrop-filter: blur(10px); }
+        .nav-link.active { color: #ffc107 !important; border-bottom: 2px solid #ffc107; }
+        .card-custom { border: 1px solid rgba(255, 255, 255, 0.1); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .is-invalid ~ .invalid-feedback { display: block; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-black text-light pt-5 mt-5">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 navbar-custom fixed-top border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand text-light fw-bold fs-4" href="index.html"><i class="bi bi-cpu text-warning me-2"></i>ML Alarm</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link text-light" href="index.html"><i class="bi bi-alarm me-1"></i>Будильник</a></li>
+                    <li class="nav-item"><a class="nav-link text-light" href="profile.html"><i class="bi bi-person me-1"></i>Профіль</a></li>
+                    <li class="nav-item"><a class="nav-link text-light" href="about.html"><i class="bi bi-info-circle me-1"></i>Про додаток</a></li>
+                    <li class="nav-item" id="navLogin"><a class="nav-link text-light" href="login.html"><i class="bi bi-box-arrow-in-right me-1"></i>Вхід</a></li>
+                    <li class="nav-item" id="navRegister"><a class="nav-link text-light active" href="register.html"><i class="bi bi-person-plus me-1"></i>Реєстрація</a></li>
+                    <li class="nav-item d-none" id="navLogout"><a class="nav-link text-light" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right me-1"></i>Вийти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1 d-flex justify-content-center align-items-center">
+        <div class="card card-custom bg-dark shadow-lg rounded-3 w-100" style="max-width:500px;">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus text-warning d-block mb-2" style="font-size:2.5rem;"></i>
+                    <h2 class="card-title text-warning fw-bold">Реєстрація</h2>
+                    <p class="text-secondary small">Створіть свій профіль у ML Alarm</p>
+                </div>
+                <div id="alertBox" class="d-none mb-3"></div>
+                <div class="mb-3">
+                    <label for="regName" class="form-label text-secondary small">Ім'я та Прізвище</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-black border-secondary"><i class="bi bi-person text-muted"></i></span>
+                        <input type="text" class="form-control border-secondary" id="regName" placeholder="Введіть ваше ім'я">
+                    </div>
+                    <div class="invalid-feedback" id="regNameError"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="regEmail" class="form-label text-secondary small">Електронна пошта</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-black border-secondary"><i class="bi bi-envelope text-muted"></i></span>
+                        <input type="email" class="form-control border-secondary" id="regEmail" placeholder="ivan@example.com">
+                    </div>
+                    <div class="invalid-feedback" id="regEmailError"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label d-block text-secondary small">Стать</label>
+                    <div class="d-flex gap-4 p-2 bg-black bg-opacity-25 rounded border border-secondary border-opacity-25" id="genderGroup">
+                        <div class="form-check">
+                            <input class="form-check-input border-secondary" type="radio" name="genderOptions" id="genderMale" value="male">
+                            <label class="form-check-label text-light small" for="genderMale">Чоловіча</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input border-secondary" type="radio" name="genderOptions" id="genderFemale" value="female">
+                            <label class="form-check-label text-light small" for="genderFemale">Жіноча</label>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback" id="genderError"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="regDob" class="form-label text-secondary small">Дата народження</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-black border-secondary"><i class="bi bi-calendar3 text-muted"></i></span>
+                        <input type="date" class="form-control border-secondary" id="regDob">
+                    </div>
+                    <div class="invalid-feedback" id="regDobError"></div>
+                </div>
+                <div class="mb-4">
+                    <label for="regPass" class="form-label text-secondary small">Створити пароль</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-black border-secondary"><i class="bi bi-shield-lock text-muted"></i></span>
+                        <input type="password" class="form-control border-secondary" id="regPass" placeholder="Мінімум 6 символів">
+                        <button class="btn btn-outline-secondary border-secondary" type="button" id="togglePass"><i class="bi bi-eye" id="togglePassIcon"></i></button>
+                    </div>
+                    <div class="invalid-feedback" id="regPassError"></div>
+                </div>
+                <button type="button" class="btn btn-warning w-100 text-dark fw-bold shadow-sm mb-3" id="registerBtn">
+                    <i class="bi bi-person-check me-1"></i>Зареєструватися
+                </button>
+                <div class="text-center">
+                    <small class="text-secondary">Вже є акаунт? <a href="login.html" class="text-warning text-decoration-none fw-semibold">Увійти</a></small>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark bg-opacity-75 navbar-custom text-white text-center py-3 mt-auto border-top border-secondary">
+        <div class="container"><p class="mb-0 small text-secondary">&copy; 2026 ML Alarm. Твій час під твоїм контролем.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // ===== STORAGE =====
+    const Storage = {
+        getUsers() { return JSON.parse(localStorage.getItem('ml_alarm_users') || '[]'); },
+        saveUsers(u) { localStorage.setItem('ml_alarm_users', JSON.stringify(u)); },
+        getCurrentUser() {
+            const email = localStorage.getItem('ml_alarm_current_user');
+            if (!email) return null;
+            return this.getUsers().find(u => u.email === email) || null;
+        },
+        setCurrentUser(email) { localStorage.setItem('ml_alarm_current_user', email); },
+        clearCurrentUser() { localStorage.removeItem('ml_alarm_current_user'); },
+    };
+
+    // ===== NAV =====
+    (function updateNav() {
+        if (Storage.getCurrentUser()) {
+            document.getElementById('navLogin').classList.add('d-none');
+            document.getElementById('navRegister').classList.add('d-none');
+            document.getElementById('navLogout').classList.remove('d-none');
+        }
+    })();
+
+    if (Storage.getCurrentUser()) window.location.href = 'index.html';
+
+    // ===== MODEL =====
+    const RegisterModel = {
+        validate(data) {
+            const e = {};
+            if (!data.name.trim() || data.name.trim().length < 2) e.name = "Введіть ім'я (мінімум 2 символи)";
+            if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Введіть коректну електронну пошту';
+            if (!data.gender) e.gender = 'Оберіть стать';
+            if (!data.dob) e.dob = 'Вкажіть дату народження';
+            if (!data.password || data.password.length < 6) e.password = 'Пароль — мінімум 6 символів';
+            return e;
+        },
+        register(data) {
+            const users = Storage.getUsers();
+            if (users.find(u => u.email === data.email.trim().toLowerCase()))
+                return { success: false, message: 'Користувач з таким email вже існує' };
+            const user = { name: data.name.trim(), email: data.email.trim().toLowerCase(), gender: data.gender, dob: data.dob, password: data.password, registeredAt: new Date().toISOString() };
+            users.push(user);
+            Storage.saveUsers(users);
+            Storage.setCurrentUser(user.email);
+            return { success: true };
+        },
+    };
+
+    // ===== VIEW =====
+    const RegisterView = {
+        clearErrors() {
+            document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.invalid-feedback').forEach(el => el.textContent = '');
+            document.getElementById('alertBox').className = 'd-none mb-3';
+        },
+        showErrors(errors) {
+            if (errors.name) { document.getElementById('regName').classList.add('is-invalid'); document.getElementById('regNameError').textContent = errors.name; }
+            if (errors.email) { document.getElementById('regEmail').classList.add('is-invalid'); document.getElementById('regEmailError').textContent = errors.email; }
+            if (errors.gender) { document.getElementById('genderGroup').classList.add('is-invalid'); document.getElementById('genderError').textContent = errors.gender; }
+            if (errors.dob) { document.getElementById('regDob').classList.add('is-invalid'); document.getElementById('regDobError').textContent = errors.dob; }
+            if (errors.password) { document.getElementById('regPass').classList.add('is-invalid'); document.getElementById('regPassError').textContent = errors.password; }
+        },
+        showAlert(msg, type = 'danger') {
+            const box = document.getElementById('alertBox');
+            box.className = `alert alert-${type} small mb-3`;
+            box.textContent = msg;
+        },
+        getFormData() {
+            const gender = document.querySelector('input[name="genderOptions"]:checked');
+            return { name: document.getElementById('regName').value, email: document.getElementById('regEmail').value, gender: gender ? gender.value : '', dob: document.getElementById('regDob').value, password: document.getElementById('regPass').value };
+        },
+    };
+
+    // ===== CONTROLLER =====
+    document.getElementById('registerBtn').addEventListener('click', () => {
+        RegisterView.clearErrors();
+        const data = RegisterView.getFormData();
+        const errors = RegisterModel.validate(data);
+        if (Object.keys(errors).length > 0) { RegisterView.showErrors(errors); return; }
+        const result = RegisterModel.register(data);
+        if (result.success) {
+            RegisterView.showAlert('Реєстрація успішна! Переходимо...', 'success');
+            setTimeout(() => window.location.href = 'profile.html', 1200);
+        } else {
+            RegisterView.showAlert(result.message);
+        }
+    });
+
+    document.getElementById('togglePass').addEventListener('click', () => {
+        const input = document.getElementById('regPass');
+        const icon = document.getElementById('togglePassIcon');
+        input.type = input.type === 'password' ? 'text' : 'password';
+        icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', e => {
+        e.preventDefault(); Storage.clearCurrentUser(); window.location.href = 'login.html';
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="uk" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ML Alarm - Будильники</title>
+    <link rel="icon" type="image/png" href="Alarm.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .navbar-custom { backdrop-filter: blur(10px); }
+        .nav-link.active { color: #ffc107 !important; border-bottom: 2px solid #ffc107; }
+        .card-custom { border: 1px solid rgba(255, 255, 255, 0.1); }
+        .alarm-item { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.08); }
+        .alarm-item:hover { border-color: rgba(255,193,7,0.3); }
+        .alarm-item.disabled-alarm { opacity: 0.45; }
+        .clock-display { font-size: 3.2rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; }
+        @keyframes pulseGlow { 0%,100%{box-shadow:0 0 0 0 rgba(255,193,7,0.5);} 50%{box-shadow:0 0 0 10px rgba(255,193,7,0);} }
+        #alarmOverlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.88); align-items:center; justify-content:center; }
+        #alarmOverlay .ring-icon { animation: pulseGlow 0.8s infinite; border-radius: 50%; display: inline-block; padding: 1rem; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-black text-light pt-5 mt-5">
+
+    <!-- Overlay -->
+    <div id="alarmOverlay">
+        <div class="text-center p-5 rounded-4 border border-warning" style="background:#111; max-width:400px; width:90%;">
+            <span class="ring-icon mb-3 d-block">
+                <i class="bi bi-alarm-fill text-warning" style="font-size:4rem;"></i>
+            </span>
+            <h2 class="text-warning fw-bold mb-2">Будильник спрацював!</h2>
+            <p class="text-light mb-4" id="overlayLabel">—</p>
+            <button class="btn btn-warning btn-lg text-dark fw-bold px-5" id="dismissBtn">
+                <i class="bi bi-x-circle me-2"></i>Вимкнути
+            </button>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 navbar-custom fixed-top border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand text-light fw-bold fs-4" href="index.html"><i class="bi bi-cpu text-warning me-2"></i>ML Alarm</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link text-light active" href="index.html"><i class="bi bi-alarm me-1"></i>Будильник</a></li>
+                    <li class="nav-item"><a class="nav-link text-light" href="profile.html"><i class="bi bi-person me-1"></i>Профіль</a></li>
+                    <li class="nav-item"><a class="nav-link text-light" href="about.html"><i class="bi bi-info-circle me-1"></i>Про додаток</a></li>
+                    <li class="nav-item" id="navLogin"><a class="nav-link text-light" href="login.html"><i class="bi bi-box-arrow-in-right me-1"></i>Вхід</a></li>
+                    <li class="nav-item" id="navRegister"><a class="nav-link text-light" href="register.html"><i class="bi bi-person-plus me-1"></i>Реєстрація</a></li>
+                    <li class="nav-item d-none" id="navLogout"><a class="nav-link text-light" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right me-1"></i>Вийти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1">
+        <div class="text-center mb-4">
+            <div class="clock-display text-warning" id="clockDisplay">00:00:00</div>
+            <p class="text-secondary small mb-0" id="dateDisplay"></p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-5 col-lg-4">
+                <div class="card card-custom bg-dark shadow rounded-3 h-100">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-light mb-4"><i class="bi bi-plus-circle text-warning me-2"></i>Додати новий</h4>
+                        <div id="formAlert" class="d-none mb-3"></div>
+                        <div class="mb-3">
+                            <label for="alarmLabel" class="form-label text-secondary small">Назва будильника</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary"><i class="bi bi-tag text-warning"></i></span>
+                                <input type="text" class="form-control border-secondary" id="alarmLabel" placeholder="Наприклад: Прокинутись">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alarmDate" class="form-label text-secondary small">Дата спрацювання</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary"><i class="bi bi-calendar-event text-warning"></i></span>
+                                <input type="date" class="form-control border-secondary" id="alarmDate">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="alarmTime" class="form-label text-secondary small">Час спрацювання</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-black border-secondary"><i class="bi bi-clock text-warning"></i></span>
+                                <input type="time" class="form-control border-secondary" id="alarmTime">
+                            </div>
+                        </div>
+                        <div id="loginPrompt" class="d-none alert alert-warning small p-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <a href="login.html" class="text-dark fw-semibold">Увійдіть</a>, щоб зберігати між сесіями.
+                        </div>
+                        <button type="button" class="btn btn-warning w-100 text-dark fw-bold" id="saveAlarmBtn">
+                            <i class="bi bi-save me-1"></i>Зберегти будильник
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7 col-lg-8">
+                <div class="card card-custom bg-dark shadow rounded-3 h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="card-title text-light mb-0"><i class="bi bi-list-stars text-warning me-2"></i>Заведені зараз</h4>
+                            <span class="badge bg-warning text-dark" id="alarmCount">0</span>
+                        </div>
+                        <div id="alarmsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark bg-opacity-75 navbar-custom text-white text-center py-3 mt-auto border-top border-secondary">
+        <div class="container"><p class="mb-0 small text-secondary">&copy; 2026 ML Alarm. Твій час під твоїм контролем.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // ===== STORAGE =====
+    const Storage = {
+        getUsers() { return JSON.parse(localStorage.getItem('ml_alarm_users') || '[]'); },
+        getCurrentUser() {
+            const email = localStorage.getItem('ml_alarm_current_user');
+            if (!email) return null;
+            return this.getUsers().find(u => u.email === email) || null;
+        },
+        clearCurrentUser() { localStorage.removeItem('ml_alarm_current_user'); },
+        getAlarms(email) {
+            const all = JSON.parse(localStorage.getItem('ml_alarm_alarms') || '{}');
+            return all[email] || [];
+        },
+        saveAlarms(email, alarms) {
+            const all = JSON.parse(localStorage.getItem('ml_alarm_alarms') || '{}');
+            all[email] = alarms;
+            localStorage.setItem('ml_alarm_alarms', JSON.stringify(all));
+        },
+    };
+
+    // ===== MODEL =====
+    const AlarmModel = {
+        _session: [],
+        _user: null,
+        init(user) { this._user = user; },
+        getAll() { return this._user ? Storage.getAlarms(this._user.email) : this._session; },
+        save(alarms) { if (this._user) Storage.saveAlarms(this._user.email, alarms); else this._session = alarms; },
+        add(alarm) { const a = this.getAll(); a.push(alarm); this.save(a); },
+        toggle(id) { const a = this.getAll(); const x = a.find(i => i.id === id); if (x) x.enabled = !x.enabled; this.save(a); },
+        remove(id) { this.save(this.getAll().filter(i => i.id !== id)); },
+        markFired(id) { const a = this.getAll(); const x = a.find(i => i.id === id); if (x) x.fired = true; this.save(a); },
+        validate(date, time) {
+            if (!date || !time) return 'Вкажіть дату та час';
+            if (new Date(`${date}T${time}`) <= new Date()) return 'Час має бути в майбутньому';
+            return null;
+        },
+        create(label, date, time) {
+            return { id: Date.now().toString(), label: label.trim() || 'Будильник', date, time, datetime: `${date}T${time}`, enabled: true, fired: false, createdAt: new Date().toISOString() };
+        },
+        countdown(dt) {
+            const diff = new Date(dt) - new Date();
+            if (diff <= 0) return null;
+            const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+            if (h > 0) return `${h}г ${m}хв`;
+            if (m > 0) return `${m}хв ${s}с`;
+            return `${s}с`;
+        },
+    };
+
+    // ===== VIEW =====
+    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function renderAlarms() {
+        const alarms = AlarmModel.getAll();
+        const active = alarms.filter(a => a.enabled && !a.fired).length;
+        document.getElementById('alarmCount').textContent = active;
+        const container = document.getElementById('alarmsList');
+        if (alarms.length === 0) {
+            container.innerHTML = `<div class="alert bg-black text-center rounded-3 border-secondary p-5">
+                <i class="bi bi-alarm-fill text-muted mb-3 d-block" style="font-size:3rem;"></i>
+                <h5 class="text-secondary">Немає заведених будильників</h5>
+                <p class="text-muted small mb-0">Використай форму зліва, щоб додати перший.</p></div>`;
+            return;
+        }
+        container.innerHTML = alarms.map(a => {
+            const cd = AlarmModel.countdown(a.datetime);
+            const dt = new Date(a.datetime);
+            const ds = dt.toLocaleDateString('uk-UA', { day:'numeric', month:'short', year:'numeric' });
+            const ts = dt.toLocaleTimeString('uk-UA', { hour:'2-digit', minute:'2-digit' });
+            return `<div class="alarm-item rounded-3 p-3 mb-3 bg-black bg-opacity-50 ${!a.enabled ? 'disabled-alarm' : ''}" id="alarm-${a.id}">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                            <span class="fw-semibold text-light">${escHtml(a.label)}</span>
+                            ${a.fired ? '<span class="badge bg-secondary" style="font-size:.7rem;">Спрацював</span>' : ''}
+                            ${!a.fired && !a.enabled ? '<span class="badge bg-secondary" style="font-size:.7rem;">Вимкнено</span>' : ''}
+                            ${!a.fired && a.enabled && cd ? `<span class="badge bg-warning text-dark" style="font-size:.7rem;">через ${cd}</span>` : ''}
+                        </div>
+                        <div class="text-muted small"><i class="bi bi-calendar3 me-1"></i>${ds}<i class="bi bi-clock ms-2 me-1"></i>${ts}</div>
+                    </div>
+                    <div class="d-flex gap-2 ms-3">
+                        ${!a.fired ? `<button class="btn btn-sm btn-outline-secondary border-0" onclick="toggleAlarm('${a.id}')" title="${a.enabled ? 'Вимкнути' : 'Увімкнути'}">
+                            <i class="bi bi-${a.enabled ? 'pause-circle' : 'play-circle'} text-warning"></i></button>` : ''}
+                        <button class="btn btn-sm btn-outline-secondary border-0" onclick="deleteAlarm('${a.id}')" title="Видалити">
+                            <i class="bi bi-trash text-danger"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function showFormAlert(msg, type = 'danger') {
+        const el = document.getElementById('formAlert');
+        el.className = `alert alert-${type} small mb-3 p-2`;
+        el.textContent = msg;
+        setTimeout(() => el.className = 'd-none mb-3', 3000);
+    }
+
+    // ===== ALARM RING =====
+    let audioCtx = null, ringTimeout = null;
+
+    function ringAlarm(label) {
+        document.getElementById('overlayLabel').textContent = label;
+        document.getElementById('alarmOverlay').style.display = 'flex';
+        playBeep();
+        ringTimeout = setTimeout(dismissAlarm, 60000);
+    }
+
+    function dismissAlarm() {
+        document.getElementById('alarmOverlay').style.display = 'none';
+        if (ringTimeout) { clearTimeout(ringTimeout); ringTimeout = null; }
+        if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
+    }
+
+    function playBeep() {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const t = audioCtx.currentTime;
+            [[880,0],[880,0.28],[1100,0.56],[880,1.4],[880,1.68],[1100,1.96],[880,2.8],[880,3.08],[1100,3.36]].forEach(([freq, start]) => {
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sine'; osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.35, t + start);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + start + 0.22);
+                osc.start(t + start); osc.stop(t + start + 0.22);
+            });
+        } catch(e) {}
+    }
+
+    // ===== CONTROLLER =====
+    const currentUser = Storage.getCurrentUser();
+    AlarmModel.init(currentUser);
+
+    // Nav
+    if (currentUser) {
+        document.getElementById('navLogin').classList.add('d-none');
+        document.getElementById('navRegister').classList.add('d-none');
+        document.getElementById('navLogout').classList.remove('d-none');
+    } else {
+        document.getElementById('loginPrompt').classList.remove('d-none');
+    }
+
+    // Default date = today
+    document.getElementById('alarmDate').value = new Date().toISOString().split('T')[0];
+
+    // Clock
+    function tick() {
+        const now = new Date();
+        document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('uk-UA');
+        document.getElementById('dateDisplay').textContent = now.toLocaleDateString('uk-UA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }
+    tick(); setInterval(tick, 1000);
+
+    // Checker
+    setInterval(() => {
+        const now = new Date();
+        AlarmModel.getAll().forEach(a => {
+            if (!a.enabled || a.fired) return;
+            const diff = now - new Date(a.datetime);
+            if (diff >= 0 && diff < 30000) { AlarmModel.markFired(a.id); ringAlarm(a.label); }
+        });
+        renderAlarms();
+    }, 1000);
+
+    // Save alarm
+    document.getElementById('saveAlarmBtn').addEventListener('click', () => {
+        const label = document.getElementById('alarmLabel').value;
+        const date = document.getElementById('alarmDate').value;
+        const time = document.getElementById('alarmTime').value;
+        const err = AlarmModel.validate(date, time);
+        if (err) { showFormAlert(err); return; }
+        AlarmModel.add(AlarmModel.create(label, date, time));
+        showFormAlert('Будильник збережено ✓', 'success');
+        document.getElementById('alarmLabel').value = '';
+        document.getElementById('alarmTime').value = '';
+        renderAlarms();
+    });
+
+    // Global handlers for alarm list buttons
+    function toggleAlarm(id) { AlarmModel.toggle(id); renderAlarms(); }
+    function deleteAlarm(id) { AlarmModel.remove(id); renderAlarms(); }
+
+    document.getElementById('dismissBtn').addEventListener('click', dismissAlarm);
+    document.getElementById('logoutBtn').addEventListener('click', e => {
+        e.preventDefault(); Storage.clearCurrentUser(); window.location.href = 'login.html';
+    });
+
+    renderAlarms();
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ML Alarm - Про додаток</title>
+    <link rel="icon" type="image/jpeg" href="Alarm.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .navbar-custom { backdrop-filter: blur(10px); }
+        .nav-link.active { color: #ffc107 !important; border-bottom: 2px solid #ffc107; }
+        .card-custom { border: 1px solid rgba(255, 255, 255, 0.1); }
+        .logo-glow { filter: drop-shadow(0 0 15px rgba(255,193,7,0.2)); border-radius: 20px; }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-black text-light pt-5 mt-5">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 navbar-custom fixed-top border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand text-light fw-bold fs-4" href="index.html"><i class="bi bi-cpu text-warning me-2"></i>ML Alarm</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link text-light" href="index.html"><i class="bi bi-alarm me-1"></i>Будильник</a></li>
+                    <li class="nav-item"><a class="nav-link text-light" href="profile.html"><i class="bi bi-person me-1"></i>Профіль</a></li>
+                    <li class="nav-item"><a class="nav-link text-light active fw-semibold" href="about.html"><i class="bi bi-info-circle me-1"></i>Про додаток</a></li>
+                    <li class="nav-item" id="navLogin"><a class="nav-link text-light" href="login.html"><i class="bi bi-box-arrow-in-right me-1"></i>Вхід</a></li>
+                    <li class="nav-item" id="navRegister"><a class="nav-link text-light" href="register.html"><i class="bi bi-person-plus me-1"></i>Реєстрація</a></li>
+                    <li class="nav-item d-none" id="navLogout"><a class="nav-link text-light" href="#" id="logoutBtn"><i class="bi bi-box-arrow-right me-1"></i>Вийти</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1 d-flex justify-content-center align-items-center">
+        <div class="card card-custom bg-dark shadow-lg rounded-4 w-100" style="max-width:650px;">
+            <div class="card-body p-4 p-md-5 text-center">
+                <div class="mb-4">
+                    <img src="Alarm.jpg" alt="ML Alarm Logo" class="img-fluid logo-glow mb-3 shadow" style="max-width:180px;" onerror="this.style.display='none'">
+                    <h1 class="display-5 fw-bold text-warning mb-0">ML Alarm</h1>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mt-2 fw-bold shadow-sm">Версія 2.0</span>
+                </div>
+                <div class="text-start bg-black bg-opacity-50 p-4 rounded-3 border border-secondary mb-4">
+                    <h5 class="text-light mb-3"><i class="bi bi-stars text-warning me-2"></i>Наша місія</h5>
+                    <p class="text-secondary mb-0">Ми створили <strong>ML Alarm</strong> для тих, хто цінує свій час та прагне кожної секунди бути продуктивним. Це не просто будильник — це інструмент для вашої дисципліни та комфортного початку дня.</p>
+                </div>
+                <div class="row g-3 text-start mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 border border-secondary border-opacity-25 rounded-3 h-100">
+                            <i class="bi bi-lightning-charge-fill text-warning mb-2 d-block"></i>
+                            <h6 class="text-light">Швидкість</h6>
+                            <p class="small text-secondary mb-0">Миттєве налаштування на будь-якому пристрої.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border border-secondary border-opacity-25 rounded-3 h-100">
+                            <i class="bi bi-shield-check text-warning mb-2 d-block"></i>
+                            <h6 class="text-light">Надійність</h6>
+                            <p class="small text-secondary mb-0">Ваші будильники спрацюють вчасно.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border border-secondary border-opacity-25 rounded-3 h-100">
+                            <i class="bi bi-person-check text-warning mb-2 d-block"></i>
+                            <h6 class="text-light">Акаунт</h6>
+                            <p class="small text-secondary mb-0">Реєструйтесь для збереження між сесіями.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border border-secondary border-opacity-25 rounded-3 h-100">
+                            <i class="bi bi-code-slash text-warning mb-2 d-block"></i>
+                            <h6 class="text-light">Технології</h6>
+                            <p class="small text-secondary mb-0">HTML5, CSS3, Bootstrap 5, JavaScript MVC.</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-muted small mb-0"><i class="bi bi-code-slash me-1"></i> Розроблено з використанням сучасних веб-технологій.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark bg-opacity-75 navbar-custom text-white text-center py-3 mt-auto border-top border-secondary">
+        <div class="container"><p class="mb-0 small text-secondary">&copy; 2026 ML Alarm. Кожна хвилина має значення.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const Storage = {
+        getUsers() { return JSON.parse(localStorage.getItem('ml_alarm_users') || '[]'); },
+        getCurrentUser() {
+            const email = localStorage.getItem('ml_alarm_current_user');
+            if (!email) return null;
+            return this.getUsers().find(u => u.email === email) || null;
+        },
+        clearCurrentUser() { localStorage.removeItem('ml_alarm_current_user'); },
+    };
+    if (Storage.getCurrentUser()) {
+        document.getElementById('navLogin').classList.add('d-none');
+        document.getElementById('navRegister').classList.add('d-none');
+        document.getElementById('navLogout').classList.remove('d-none');
+    }
+    document.getElementById('logoutBtn').addEventListener('click', e => {
+        e.preventDefault(); Storage.clearCurrentUser(); window.location.href = 'login.html';
+    });
+    </script>
+</body>
+</html>
